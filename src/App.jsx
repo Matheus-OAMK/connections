@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
 import { GAME_DATA, getShuffledWords } from './data/gameData';
+import grinchImg from './assets/grinch.png';
 import './App.css';
 
 const MAX_LIVES = 5;
@@ -272,8 +273,8 @@ function App() {
       {gameOver && !won && (
         <div className="game-over lose">
           <div className="grinch-container">
-            <div className="grinch">🎄💚</div>
-            <div className="coal">🪨</div>
+            <img src={grinchImg} alt="Grinch" className="grinch" />
+            <div className="coal"></div>
           </div>
           <h2>Game Over</h2>
           <p>Better luck next time!</p>
