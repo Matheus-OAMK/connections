@@ -4,6 +4,8 @@
   padding: 20px;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   text-align: center;
+  position: relative;
+  overflow: hidden;
 }
 
 h1 {
@@ -67,6 +69,16 @@ h1 {
 .word-tile.selected {
   background-color: #5a594e;
   color: white;
+}
+
+.word-tile.shake {
+  animation: shake 0.5s ease-in-out infinite;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+  20%, 40%, 60%, 80% { transform: translateX(5px); }
 }
 
 /* Message */
@@ -202,4 +214,136 @@ h1 {
 .game-over p {
   margin-bottom: 20px;
   color: #666;
+}
+
+/* Snow Effect */
+.snow-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 999;
+  overflow: hidden;
+}
+
+.snowflake {
+  position: absolute;
+  top: -50px;
+  color: #add8e6;
+  animation: fall linear forwards;
+  text-shadow: 0 0 5px #fff;
+}
+
+@keyframes fall {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100vh) rotate(360deg);
+    opacity: 0.3;
+  }
+}
+
+/* Win State - Reindeer */
+.game-over.win {
+  background: linear-gradient(135deg, #1a472a 0%, #2d5a3d 100%);
+  color: white;
+}
+
+.game-over.win p {
+  color: #a0d8b3;
+}
+
+.reindeer-container {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.reindeer {
+  font-size: 4rem;
+  animation: dance 0.5s ease-in-out infinite alternate;
+}
+
+.reindeer.delay-1 {
+  animation-delay: 0.15s;
+}
+
+.reindeer.delay-2 {
+  animation-delay: 0.3s;
+}
+
+@keyframes dance {
+  0% {
+    transform: translateY(0) rotate(-10deg);
+  }
+  100% {
+    transform: translateY(-20px) rotate(10deg);
+  }
+}
+
+.jingle-text {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #ffd700;
+  margin-bottom: 20px;
+  animation: jingle 0.3s ease-in-out infinite alternate;
+}
+
+@keyframes jingle {
+  0% { transform: scale(1); }
+  100% { transform: scale(1.1); }
+}
+
+/* Lose State - Grinch */
+.game-over.lose {
+  background: linear-gradient(135deg, #2a1a1a 0%, #3d2a2a 100%);
+  color: white;
+}
+
+.game-over.lose p {
+  color: #d8a0a0;
+}
+
+.grinch-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 30px;
+  margin-bottom: 20px;
+}
+
+.grinch {
+  font-size: 4rem;
+  animation: grinchSneak 2s ease-in-out infinite;
+}
+
+@keyframes grinchSneak {
+  0%, 100% {
+    transform: translateX(0) rotate(0deg);
+  }
+  25% {
+    transform: translateX(-10px) rotate(-5deg);
+  }
+  75% {
+    transform: translateX(10px) rotate(5deg);
+  }
+}
+
+.coal {
+  font-size: 3rem;
+  animation: coalBounce 0.6s ease-in-out infinite;
+}
+
+@keyframes coalBounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
 }

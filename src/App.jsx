@@ -4,6 +4,7 @@ import './App.css';
 
 const MAX_LIVES = 5;
 const MAX_SELECTED = 4;
+const SNOWFLAKE_COUNT = 50;
 
 function App() {
   const [words, setWords] = useState(() => getShuffledWords());
@@ -14,6 +15,9 @@ function App() {
   const [gameOver, setGameOver] = useState(false);
   const [won, setWon] = useState(false);
   const [guessedCombinations, setGuessedCombinations] = useState(new Set());
+  const [isShaking, setIsShaking] = useState(false);
+  const [showSnow, setShowSnow] = useState(false);
+  const [snowflakes, setSnowflakes] = useState([]);
 
   // Auto-hide toast after 2 seconds
   useEffect(() => {
@@ -22,6 +26,35 @@ function App() {
       return () => clearTimeout(timer);
     }
   }, [toast]);
+
+  // Clear shake after 2 seconds
+  useEffect(() => {
+    if (isShaking) {
+      const timer = setTimeout(() => setIsShaking(false), 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [isShaking]);
+
+  // Generate and clear snowflakes
+  useEffect(() => {
+    if (showSnow) {
+      // Generate random snowflakes
+      const flakes = Array.from({ length: SNOWFLAKE_COUNT }, (_, i) => ({
+        id: i,
+        left: Math.random() * 100,
+        delay: Math.random() * 2,
+        duration: 2 + Math.random() * 2,
+        size: 10 + Math.random() * 20,
+      }));
+      setSnowflakes(flakes);
+      
+      const timer = setTimeout(() => {
+        setShowSnow(false);
+        setSnowflakes([]);
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [showSnow]);
 
   // Helper to create a consistent key for a set of words
   const getGuessKey = (wordsSet) => {
@@ -37,7 +70,7 @@ function App() {
   );
 
   const toggleSelect = useCallback((word) => {
-    if (gameOver) return;
+    if (gameOver || isShaking) return;
     
     setSelected(prev => {
       const newSet = new Set(prev);
@@ -48,7 +81,7 @@ function App() {
       }
       return newSet;
     });
-  }, [gameOver]);
+  }, [gameOver, isShaking]);
 
   const deselectAll = useCallback(() => {
     setSelected(new Set());
@@ -82,6 +115,7 @@ function App() {
       const group = GAME_DATA.groups[parseInt(correctGroupIndex)];
       setFoundGroups(prev => [...prev, group]);
       setSelected(new Set());
+      setShowSnow(true);
 
       // Check for win
       if (foundGroups.length === 3) {
@@ -96,6 +130,7 @@ function App() {
         setToast('One away...');
       }
 
+      setIsShaking(true);
       const newLives = lives - 1;
       setLives(newLives);
 
@@ -119,12 +154,35 @@ function App() {
     setGameOver(false);
     setWon(false);
     setGuessedCombinations(new Set());
+    setIsShaking(false);
+    setShowSnow(false);
+    setSnowflakes([]);
   }, []);
 
   return (
     <div className="app">
       <h1>Connections</h1>
       <p className="subtitle">Create four groups of four!</p>
+
+      {/* Snow Effect */}
+      {showSnow && (
+        <div className="snow-container">
+          {snowflakes.map(flake => (
+            <div
+              key={flake.id}
+              className="snowflake"
+              style={{
+                left: `${flake.left}%`,
+                animationDelay: `${flake.delay}s`,
+                animationDuration: `${flake.duration}s`,
+                fontSize: `${flake.size}px`,
+              }}
+            >
+              ❄
+            </div>
+          ))}
+        </div>
+      )}
 
       {/* Toast Popup */}
       {toast && (
@@ -153,7 +211,7 @@ function App() {
           {remainingWords.map((wordData, index) => (
             <button
               key={index}
-              className={`word-tile ${selected.has(wordData.word) ? 'selected' : ''}`}
+              className={`word-tile ${selected.has(wordData.word) ? 'selected' : ''} ${selected.has(wordData.word) && isShaking ? 'shake' : ''}`}
               onClick={() => toggleSelect(wordData.word)}
             >
               {wordData.word}
@@ -179,25 +237,46 @@ function App() {
           <button
             className="control-btn"
             onClick={deselectAll}
-            disabled={selected.size === 0}
+            disabled={selected.size === 0 || isShaking}
           >
             Deselect All
           </button>
           <button
             className="control-btn submit-btn"
             onClick={submitGuess}
-            disabled={selected.size !== MAX_SELECTED || isAlreadyGuessed}
+            disabled={selected.size !== MAX_SELECTED || isAlreadyGuessed || isShaking}
           >
             Submit
           </button>
         </div>
       )}
 
-      {/* Game Over */}
-      {gameOver && (
-        <div className="game-over">
-          <h2>{won ? 'Congratulations!' : 'Game Over'}</h2>
-          <p>{won ? 'You found all the connections!' : 'Better luck next time!'}</p>
+      {/* Game Over - Win */}
+      {gameOver && won && (
+        <div className="game-over win">
+          <div className="reindeer-container">
+            <div className="reindeer">🦌</div>
+            <div className="reindeer delay-1">🦌</div>
+            <div className="reindeer delay-2">🦌</div>
+          </div>
+          <h2>Congratulations!</h2>
+          <p>You found all the connections!</p>
+          <div className="jingle-text">Make it jingle!</div>
+          <button className="control-btn" onClick={resetGame}>
+            Play Again
+          </button>
+        </div>
+      )}
+
+      {/* Game Over - Lose */}
+      {gameOver && !won && (
+        <div className="game-over lose">
+          <div className="grinch-container">
+            <div className="grinch">🎄💚</div>
+            <div className="coal">🪨</div>
+          </div>
+          <h2>Game Over</h2>
+          <p>Better luck next time!</p>
           <button className="control-btn" onClick={resetGame}>
             Play Again
           </button>
