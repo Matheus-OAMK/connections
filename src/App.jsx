@@ -1,6 +1,7 @@
 import { useState, useCallback, useEffect } from 'react';
 import { GAME_DATA, getShuffledWords } from './data/gameData';
 import grinchImg from './assets/grinch.png';
+import pabloImg from './assets/pablo.png';
 import './App.css';
 
 const MAX_LIVES = 5;
@@ -52,7 +53,7 @@ function App() {
       const timer = setTimeout(() => {
         setShowSnow(false);
         setSnowflakes([]);
-      }, 3000);
+      }, 4500);
       return () => clearTimeout(timer);
     }
   }, [showSnow]);
@@ -182,6 +183,7 @@ function App() {
               ❄
             </div>
           ))}
+          <img src={pabloImg} alt="Pablo catching snowflakes" className="pablo" />
         </div>
       )}
 
