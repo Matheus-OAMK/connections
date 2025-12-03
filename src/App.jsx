@@ -275,7 +275,6 @@ function App() {
           </div>
           <h2>Congratulations!</h2>
           <p>You found all the connections!</p>
-          <div className="jingle-text">Make it jingle!</div>
           <button className="control-btn" onClick={resetGame}>
             Play Again
           </button>
