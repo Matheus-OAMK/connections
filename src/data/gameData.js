@@ -2,26 +2,26 @@
 export const GAME_DATA = {
   groups: [
     {
-      category: "PLANETS IN OUR SOLAR SYSTEM",
-      words: ["MARS", "VENUS", "SATURN", "JUPITER"],
-      color: "#f9df6d" // yellow - easiest
+      category: "JOULUELOKUVIA",
+      words: ["LUMIUKKO", "PETTERI PUNAKUONO", "SAITURIN JOULU", "JOULUTARINA"],
+      color: "#f9df6d", // yellow - easiest
     },
     {
-      category: "GREEK GODS",
-      words: ["ZEUS", "APOLLO", "ATHENA", "POSEIDON"],
-      color: "#a0c35a" // green
+      category: "JOULUPUKIN POROJA",
+      words: ["PYRY", "KIPINÄ", "SIPSU", "MASKOTTI"],
+      color: "#a0c35a", // green
     },
     {
-      category: "THINGS THAT ARE RED",
-      words: ["CHERRY", "FIRE", "BLOOD", "RUBY"],
-      color: "#b0c4ef" // blue
+      category: "KUUSENKORISTEITA",
+      words: ["KYNTTILÄ", "TÄHTI", "PALLO", "KÖYNNÖS"],
+      color: "#b0c4ef", // blue
     },
     {
-      category: "_____ KING",
-      words: ["LION", "BURGER", "DRAG", "STEPHEN"],
-      color: "#ba81c5" // purple - hardest
-    }
-  ]
+      category: "JOULUSANOJA, JOIDEN ENSIMMÄINEN KIRJAIN ON VAIHDETTU",
+      words: ["MONTTU", "MORO", "KOULU", "LUKKI"],
+      color: "#ba81c5", // purple - hardest
+    },
+  ],
 };
 
 // Utility to shuffle an array
@@ -36,8 +36,11 @@ export function shuffleArray(array) {
 
 // Get all words from the game data, shuffled
 export function getShuffledWords() {
-  const allWords = GAME_DATA.groups.flatMap(group => 
-    group.words.map(word => ({ word, groupIndex: GAME_DATA.groups.indexOf(group) }))
+  const allWords = GAME_DATA.groups.flatMap((group) =>
+    group.words.map((word) => ({
+      word,
+      groupIndex: GAME_DATA.groups.indexOf(group),
+    })),
   );
   return shuffleArray(allWords);
 }

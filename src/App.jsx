@@ -1,8 +1,8 @@
-import { useState, useCallback, useEffect } from 'react';
-import { GAME_DATA, getShuffledWords } from './data/gameData';
-import grinchImg from './assets/grinch.png';
-import pabloImg from './assets/pablo.png';
-import './App.css';
+import { useState, useCallback, useEffect } from "react";
+import { GAME_DATA, getShuffledWords } from "./data/gameData";
+import grinchImg from "./assets/grinch.png";
+import pabloImg from "./assets/pablo-new.png";
+import "./App.css";
 
 const MAX_LIVES = 5;
 const MAX_SELECTED = 4;
@@ -13,7 +13,7 @@ function App() {
   const [selected, setSelected] = useState(new Set());
   const [foundGroups, setFoundGroups] = useState([]);
   const [lives, setLives] = useState(MAX_LIVES);
-  const [toast, setToast] = useState('');
+  const [toast, setToast] = useState("");
   const [gameOver, setGameOver] = useState(false);
   const [won, setWon] = useState(false);
   const [guessedCombinations, setGuessedCombinations] = useState(new Set());
@@ -24,7 +24,7 @@ function App() {
   // Auto-hide toast after 2 seconds
   useEffect(() => {
     if (toast) {
-      const timer = setTimeout(() => setToast(''), 2000);
+      const timer = setTimeout(() => setToast(""), 2000);
       return () => clearTimeout(timer);
     }
   }, [toast]);
@@ -49,7 +49,7 @@ function App() {
         size: 10 + Math.random() * 20,
       }));
       setSnowflakes(flakes);
-      
+
       const timer = setTimeout(() => {
         setShowSnow(false);
         setSnowflakes([]);
@@ -60,30 +60,34 @@ function App() {
 
   // Helper to create a consistent key for a set of words
   const getGuessKey = (wordsSet) => {
-    return Array.from(wordsSet).sort().join(',');
+    return Array.from(wordsSet).sort().join(",");
   };
 
   // Check if current selection has already been guessed
-  const isAlreadyGuessed = selected.size === MAX_SELECTED && 
+  const isAlreadyGuessed =
+    selected.size === MAX_SELECTED &&
     guessedCombinations.has(getGuessKey(selected));
 
   const remainingWords = words.filter(
-    w => !foundGroups.some(g => g.words.includes(w.word))
+    (w) => !foundGroups.some((g) => g.words.includes(w.word)),
   );
 
-  const toggleSelect = useCallback((word) => {
-    if (gameOver || isShaking) return;
-    
-    setSelected(prev => {
-      const newSet = new Set(prev);
-      if (newSet.has(word)) {
-        newSet.delete(word);
-      } else if (newSet.size < MAX_SELECTED) {
-        newSet.add(word);
-      }
-      return newSet;
-    });
-  }, [gameOver, isShaking]);
+  const toggleSelect = useCallback(
+    (word) => {
+      if (gameOver || isShaking) return;
+
+      setSelected((prev) => {
+        const newSet = new Set(prev);
+        if (newSet.has(word)) {
+          newSet.delete(word);
+        } else if (newSet.size < MAX_SELECTED) {
+          newSet.add(word);
+        }
+        return newSet;
+      });
+    },
+    [gameOver, isShaking],
+  );
 
   const deselectAll = useCallback(() => {
     setSelected(new Set());
@@ -94,28 +98,29 @@ function App() {
 
     const selectedWords = Array.from(selected);
     const guessKey = getGuessKey(selected);
-    
+
     // Record this guess
-    setGuessedCombinations(prev => new Set([...prev, guessKey]));
-    
+    setGuessedCombinations((prev) => new Set([...prev, guessKey]));
+
     // Check which group(s) the selected words belong to
     const groupCounts = {};
-    selectedWords.forEach(word => {
-      const wordData = words.find(w => w.word === word);
+    selectedWords.forEach((word) => {
+      const wordData = words.find((w) => w.word === word);
       if (wordData) {
-        groupCounts[wordData.groupIndex] = (groupCounts[wordData.groupIndex] || 0) + 1;
+        groupCounts[wordData.groupIndex] =
+          (groupCounts[wordData.groupIndex] || 0) + 1;
       }
     });
 
     // Find if any group has all 4 selected
     const correctGroupIndex = Object.entries(groupCounts).find(
-      ([, count]) => count === 4
+      ([, count]) => count === 4,
     )?.[0];
 
     if (correctGroupIndex !== undefined) {
       // Correct guess!
       const group = GAME_DATA.groups[parseInt(correctGroupIndex)];
-      setFoundGroups(prev => [...prev, group]);
+      setFoundGroups((prev) => [...prev, group]);
       setSelected(new Set());
       setShowSnow(true);
 
@@ -127,9 +132,9 @@ function App() {
     } else {
       // Incorrect guess
       const maxCount = Math.max(...Object.values(groupCounts));
-      
+
       if (maxCount === 3) {
-        setToast('One away...');
+        setToast("One away...");
       }
 
       setIsShaking(true);
@@ -140,9 +145,9 @@ function App() {
         setGameOver(true);
         // Reveal all remaining groups
         const remaining = GAME_DATA.groups.filter(
-          g => !foundGroups.some(fg => fg.category === g.category)
+          (g) => !foundGroups.some((fg) => fg.category === g.category),
         );
-        setFoundGroups(prev => [...prev, ...remaining]);
+        setFoundGroups((prev) => [...prev, ...remaining]);
       }
     }
   }, [selected, words, foundGroups, lives]);
@@ -152,7 +157,7 @@ function App() {
     setSelected(new Set());
     setFoundGroups([]);
     setLives(MAX_LIVES);
-    setToast('');
+    setToast("");
     setGameOver(false);
     setWon(false);
     setGuessedCombinations(new Set());
@@ -169,7 +174,7 @@ function App() {
       {/* Snow Effect */}
       {showSnow && (
         <div className="snow-container">
-          {snowflakes.map(flake => (
+          {snowflakes.map((flake) => (
             <div
               key={flake.id}
               className="snowflake"
@@ -183,7 +188,11 @@ function App() {
               ❄
             </div>
           ))}
-          <img src={pabloImg} alt="Pablo catching snowflakes" className="pablo" />
+          <img
+            src={pabloImg}
+            alt="Pablo catching snowflakes"
+            className="pablo"
+          />
         </div>
       )}
 
@@ -203,7 +212,7 @@ function App() {
             style={{ backgroundColor: group.color }}
           >
             <div className="group-category">{group.category}</div>
-            <div className="group-words">{group.words.join(', ')}</div>
+            <div className="group-words">{group.words.join(", ")}</div>
           </div>
         ))}
       </div>
@@ -214,7 +223,7 @@ function App() {
           {remainingWords.map((wordData, index) => (
             <button
               key={index}
-              className={`word-tile ${selected.has(wordData.word) ? 'selected' : ''} ${selected.has(wordData.word) && isShaking ? 'shake' : ''}`}
+              className={`word-tile ${selected.has(wordData.word) ? "selected" : ""} ${selected.has(wordData.word) && isShaking ? "shake" : ""}`}
               onClick={() => toggleSelect(wordData.word)}
             >
               {wordData.word}
@@ -229,7 +238,7 @@ function App() {
         {Array.from({ length: MAX_LIVES }).map((_, i) => (
           <span
             key={i}
-            className={`life-dot ${i < lives ? 'active' : 'used'}`}
+            className={`life-dot ${i < lives ? "active" : "used"}`}
           />
         ))}
       </div>
@@ -247,7 +256,9 @@ function App() {
           <button
             className="control-btn submit-btn"
             onClick={submitGuess}
-            disabled={selected.size !== MAX_SELECTED || isAlreadyGuessed || isShaking}
+            disabled={
+              selected.size !== MAX_SELECTED || isAlreadyGuessed || isShaking
+            }
           >
             Submit
           </button>
