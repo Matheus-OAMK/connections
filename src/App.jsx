@@ -1,12 +1,13 @@
 import { useState, useCallback, useEffect } from "react";
 import { GAME_DATA, getShuffledWords } from "./data/gameData";
 import grinchImg from "./assets/grinch.png";
-import pabloImg from "./assets/pablo-new.png";
+import pabloImg from "./assets/pablo-xmas-new.png";
+import pabloDanceVideo from "./assets/pablo-dance.mp4";
 import "./App.css";
 
 const MAX_LIVES = 5;
 const MAX_SELECTED = 4;
-const SNOWFLAKE_COUNT = 50;
+const SNOWFLAKE_COUNT = 100;
 
 function App() {
   const [words, setWords] = useState(() => getShuffledWords());
@@ -122,12 +123,14 @@ function App() {
       const group = GAME_DATA.groups[parseInt(correctGroupIndex)];
       setFoundGroups((prev) => [...prev, group]);
       setSelected(new Set());
-      setShowSnow(true);
 
-      // Check for win
+      // Check for win (this is the 4th/last group)
       if (foundGroups.length === 3) {
         setWon(true);
         setGameOver(true);
+      } else {
+        // Only show snow animation for non-winning connections
+        setShowSnow(true);
       }
     } else {
       // Incorrect guess
@@ -268,10 +271,15 @@ function App() {
       {/* Game Over - Win */}
       {gameOver && won && (
         <div className="game-over win">
-          <div className="reindeer-container">
-            <div className="reindeer">🦌</div>
-            <div className="reindeer delay-1">🦌</div>
-            <div className="reindeer delay-2">🦌</div>
+          <div className="pablo-dance-container">
+            <video
+              src={pabloDanceVideo}
+              autoPlay
+              loop
+              muted
+              playsInline
+              className="pablo-dance"
+            />
           </div>
           <h2>Congratulations!</h2>
           <p>You found all the connections!</p>
@@ -289,7 +297,7 @@ function App() {
             <div className="coal"></div>
           </div>
           <h2>Game Over</h2>
-          <p>Better luck next time!</p>
+          <p>Coal for you!</p>
           <button className="control-btn" onClick={resetGame}>
             Play Again
           </button>
